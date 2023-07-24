@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <style>
+        #map {
+            width: 1341px;
+            height: 852px;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="data/parcelas_urbanas_1.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString') {
+              highlightLayer.setStyle({
+                color: '#ffff00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#ffff00',
+                fillOpacity: 1
+              });
+            }
+        }
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[-42.12790243254102,-71.59638826974852],[-42.03481916594833,-71.40062677194065]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+            map.setMaxBounds(map.getBounds());
+        }
+        map.createPane('pane_GoogleHybrid_0');
+        map.getPane('pane_GoogleHybrid_0').style.zIndex = 400;
+        var layer_GoogleHybrid_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleHybrid_0',
+            opacity: 1.0,
+            attribution: '<a href="https://www.google.at/permissions/geoguidelines/attr-guide.html">Map data ©2015 Google</a>',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 20
+        });
+        layer_GoogleHybrid_0;
+        map.addLayer(layer_GoogleHybrid_0);
+        function pop_parcelas_urbanas_1(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CLASSID'] !== null ? autolinker.link(feature.properties['CLASSID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FEATID'] !== null ? autolinker.link(feature.properties['FEATID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DEP_DESCRIPTOR'] !== null ? autolinker.link(feature.properties['DEP_DESCRIPTOR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DEPARTAMENTO'] !== null ? autolinker.link(feature.properties['DEPARTAMENTO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['EJI_DESCRIPTOR'] !== null ? autolinker.link(feature.properties['EJI_DESCRIPTOR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['EJIDO'] !== null ? autolinker.link(feature.properties['EJIDO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CIRCUNSCRIPCION'] !== null ? autolinker.link(feature.properties['CIRCUNSCRIPCION'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SECTOR'] !== null ? autolinker.link(feature.properties['SECTOR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TIPO_DIVISION'] !== null ? autolinker.link(feature.properties['TIPO_DIVISION'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DIVISION'] !== null ? autolinker.link(feature.properties['DIVISION'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['COLONIA'] !== null ? autolinker.link(feature.properties['COLONIA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PARCELA'] !== null ? autolinker.link(feature.properties['PARCELA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PARTIDA'] !== null ? autolinker.link(feature.properties['PARTIDA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TIPO_PARCELA'] !== null ? autolinker.link(feature.properties['TIPO_PARCELA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SUP_MENSURA'] !== null ? autolinker.link(feature.properties['SUP_MENSURA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SUP_GEOMETRY_M2'] !== null ? autolinker.link(feature.properties['SUP_GEOMETRY_M2'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_parcelas_urbanas_1_0() {
+            return {
+                pane: 'pane_parcelas_urbanas_1',
+                opacity: 1,
+                color: 'rgba(65,65,65,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 3.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(175,167,168,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_parcelas_urbanas_1');
+        map.getPane('pane_parcelas_urbanas_1').style.zIndex = 401;
+        map.getPane('pane_parcelas_urbanas_1').style['mix-blend-mode'] = 'normal';
+        var layer_parcelas_urbanas_1 = new L.geoJson(json_parcelas_urbanas_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_parcelas_urbanas_1',
+            layerName: 'layer_parcelas_urbanas_1',
+            pane: 'pane_parcelas_urbanas_1',
+            onEachFeature: pop_parcelas_urbanas_1,
+            style: style_parcelas_urbanas_1_0,
+        });
+        bounds_group.addLayer(layer_parcelas_urbanas_1);
+        map.addLayer(layer_parcelas_urbanas_1);
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'<img src="legend/parcelas_urbanas_1.png" /> parcelas_urbanas': layer_parcelas_urbanas_1,"Google Hybrid": layer_GoogleHybrid_0,}).addTo(map);
+        map.on("zoomend", function(){
+
+                if (map.hasLayer(layer_parcelas_urbanas_1)) {
+                    if (map.getZoom() <= 17 && map.getZoom() >= 19) {
+                        layer_parcelas_urbanas_1.eachLayer(function (layer) {
+                            layer.openTooltip();
+                        });
+                    } else {
+                        layer_parcelas_urbanas_1.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
+                }
+        });
+        setBounds();
+        var i = 0;
+        layer_parcelas_urbanas_1.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((exp_label_parcelas_urbanas_1_eval_expression(context) !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Arial\', sans-serif;">' + exp_label_parcelas_urbanas_1_eval_expression(context)) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_parcelas_urbanas_1'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+                if (map.hasLayer(layer_parcelas_urbanas_1)) {
+                    if (map.getZoom() <= 17 && map.getZoom() >= 19) {
+                        layer_parcelas_urbanas_1.eachLayer(function (layer) {
+                            layer.openTooltip();
+                        });
+                    } else {
+                        layer_parcelas_urbanas_1.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
+                }
+        resetLabels([layer_parcelas_urbanas_1]);
+        map.on("zoomend", function(){
+            resetLabels([layer_parcelas_urbanas_1]);
+        });
+        map.on("layeradd", function(){
+            resetLabels([layer_parcelas_urbanas_1]);
+        });
+        map.on("layerremove", function(){
+            resetLabels([layer_parcelas_urbanas_1]);
+        });
+        </script>
+    </body>
+</html>
